@@ -2,4 +2,8 @@
 
 source "https://rubygems.org"
 
-# gem "rails"
+gem "pg"
+gem "dotenv"
+gem "rspec"
+gem "simplecov"
+gem "bcrypt"
