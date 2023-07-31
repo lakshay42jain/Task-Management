@@ -10,8 +10,8 @@ class User
     self.type=type
   end
 
-  db=DatabaseSetup.new
   def save 
+    db=DatabaseSetup.new
     db.connection.exec_params("INSERT INTO users (name, email, password, type) VALUES($1 , $2, $3, $4)",[name, email, password, type])
   end
 end

@@ -1,11 +1,13 @@
 require 'pg'
 
-
 class DatabaseSetup
   attr_accessor :connection
 
   def initialize
-    self.connection=PG.connect(dbname: 'postgres' , user: 'lakshayjain' , host: 'localhost')
+    self.connection=PG.connect(
+      dbname: 'postgres' ,
+      user: ENV['DATABASE_USER'] ,
+      host: ENV['DATABASE_HOST'])
   end
   
   def setup_database
@@ -56,10 +58,5 @@ class DatabaseSetup
         "______________________"
   
       end
-  
   end
-  
-
 end
-
-
