@@ -25,7 +25,6 @@ puts 'Enter Email'
 email = gets.chomp
 puts 'Enter Password'
 password = gets.chomp
-
 query_result_for_email = connection.exec_params("select COUNT(*) from users where email=$1",[email])
 query_result_for_pass = connection.exec_params("SELECT password FROM users WHERE email=$1",[email])
 
