@@ -4,7 +4,7 @@ require './database_connection.rb'
 class Task
   attr_accessor :id, :assignee_user_id, :description, :due_date, :priority, :creator_id, :status
 
-  def initialize(id: nil, assignee_user_id: nil, description: nil, due_date: nil, priority: 1, creator_id: nil, status: nil)
+  def initialize(id:, assignee_user_id:, description:, due_date:, priority:, creator_id:, status:)
     self.id = id
     self.assignee_user_id = assignee_user_id
     self.description = description
