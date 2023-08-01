@@ -1,6 +1,7 @@
-require './database_setup.rb'
+require './TableSetup.rb'
+# require './main.rb'
 
-class Task 
+class Tasks
   attr_accessor :id, :assignee_user_id, :description, :due_date, :priority, :creator_id, :status 
 
   def initialize(args = {})
@@ -15,8 +16,7 @@ class Task
 
   def save 
     begin
-      db = DatabaseSetup.new
-      db.connection.exec_params("INSERT INTO tasks(id, assignee_user_id, description, due_date, priority, creator_id, status) 
+      DB_CONNECTION.connection.exec_params("INSERT INTO tasks(id, assignee_user_id, description, due_date, priority, creator_id, status) 
       VALUES($1, $2, $3, $4, $5, $6, $7)", [id, assignee_user_id, description, due_date, priority, creator_id, status])
     rescue PG::InvalidTextRepresentation => e   
       puts "Invalid Represetation (May be status wrong)"

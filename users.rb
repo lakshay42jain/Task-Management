@@ -1,6 +1,6 @@
-require './database_setup.rb'
+require './TableSetup.rb'
 
-class User
+class Users
   attr_accessor :name, :email, :password, :type
 
   def initialize(args = {})
@@ -12,8 +12,7 @@ class User
 
   def save 
     begin
-      db = DatabaseSetup.new
-      db.connection.exec_params("INSERT INTO users (name, email, password, type) VALUES($1, $2, $3, $4)",[name, email, password, type])
+      DB_CONNECTION.connection.exec_params("INSERT INTO users (name, email, password, type) VALUES($1, $2, $3, $4)",[name, email, password, type])
     rescue PG::SyntaxError => e
       puts 'Error: A syntax error occurred in the SQL query.'
       puts e.message
