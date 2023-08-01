@@ -3,8 +3,8 @@ require './database_setup.rb'
 require './tasks.rb'
 require 'date'
 
-db=DatabaseSetup.new
-db.setup_database()
+db = DatabaseSetup.new
+db.setup_database
 
 def for_admin(email)
   puts "Welcome to Admin Panel"
