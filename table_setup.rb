@@ -1,4 +1,5 @@
 require 'pg'
+require './database_connection.rb'
 
 class TableSetup
   attr_accessor :connection
@@ -6,14 +7,14 @@ class TableSetup
   def initialize(connection)
     self.connection=connection
   end
-  
+
   def setup_database
     create_enum_table 
     create_users_table
     create_tasks_table
   end
 
-  private def create_enum_table
+  def create_enum_table
     begin
       self.connection.exec(
         <<~SQL
@@ -38,7 +39,7 @@ class TableSetup
     end
   end
     
-  private def create_users_table
+  def create_users_table
     begin
       self.connection.exec(
         <<~SQL
@@ -59,7 +60,7 @@ class TableSetup
     end
   end
 
-  private def create_tasks_table
+  def create_tasks_table
     begin
       self.connection.exec(
         <<~SQL
