@@ -10,7 +10,7 @@ class Login
     query_result_for_pass = connection.exec_params("SELECT password FROM users WHERE email=$1", [email])
 
     if (query_result_for_email[0]['count'].to_i >= 1 and password_match(query_result_for_pass,user_input_password))
-      res = connection.exec_params("SELECT type from users where email=$1", [email])
+      res = connection.exec_params("SELECT * from users where email=$1", [email])
       return User.new(
         name: res[0]['name'],
         email: res[0]['email'],

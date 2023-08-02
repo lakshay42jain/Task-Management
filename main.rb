@@ -11,31 +11,8 @@ require './task_manager.rb'
 connection = DatabaseConnection.connection
 table_setup = TableSetup.new(connection)
 table_setup.setup_database
-u1 = User.new(
-  name: 'lakshay',
-  email: 'lakshay@gmail.com',
-  password: 'password',
-  type: 'admin'
-)
-u1.save
-u2 = User.new(
-  name: 'chinku',
-  email: 'chinku@gmail.com',
-  password: 'password',
-  type: 'user'
-)
-u2.save
-t1 = Task.new(
-  id: 1,
-  assignee_user_id: 2,
-  description: "Complete the project (Demo)",
-  due_date: Date.new(2023, 8, 15),
-  priority: 1,
-  creator_id: 1,
-  status: "in_progress"
-)
-t1.save
-def assign_task(user)
+
+def assign_task(admin)
   puts 'enter task id (ticket id)'
   task_id = gets.chomp
   puts 'enter assignee user id'
@@ -53,8 +30,7 @@ def assign_task(user)
     description: description,
     due_date: due_date,
     priority: priority, 
-    email: email,
-    user: user
+    user: admin
   )
 end
 
@@ -102,7 +78,7 @@ def change_status
   puts "Enter the new status:"
   new_status = gets.chomp
   tm = TaskManager.new
-  tm.change_status(task_id,new_status)
+  tm.change_status(task_id, new_status)
   puts "Status Changed !!"
 end
 
@@ -121,8 +97,8 @@ end
 
 def next_task(user)
   tm = TaskManager.new
-  res = tm.user_next_task(email)
-  puts res
+  res = tm.user_next_task(user)
+  puts "Ticket id = #{res.id} and Description = #{res.description}"
 end
 
 def for_user(user)
@@ -151,8 +127,6 @@ def for_user(user)
     end  
   end
 end
-
-
 
 def login
   puts 'Enter Email'
@@ -199,4 +173,3 @@ loop do
     puts ("Invalid Choice. Please Enter a valid choice")
   end
 end
-

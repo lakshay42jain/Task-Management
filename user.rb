@@ -26,4 +26,15 @@ class User
       puts "User Created Successfully"
     end
   end
+
+  def self.find_user(email)
+    connection = DatabaseConnection.connection
+    res = connection.exec_params("SELECT * FROM users WHERE email=$1", [email])
+    return User.new(
+      name: res[0]['name'],
+      email: res[0]['email'],
+      password: res[0]['password'],
+      type: res[0]['type']
+    )
+  end
 end
