@@ -88,5 +88,4 @@ class Task
       status: status
     )
   end
-
 end

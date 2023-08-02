@@ -27,5 +27,8 @@ class TaskManager
   def user_next_task(user)
     Task.next_task(user)
   end
+
+  def postpone_task
+  end
 end
 
