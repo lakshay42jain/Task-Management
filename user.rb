@@ -15,7 +15,7 @@ class User
   def save 
     begin
       connection = DatabaseConnection.connection
-      connection.exec_params("INSERT INTO users (name, email, password, type) VALUES($1, $2, $3, $4)",[name, email, password_hash, type])
+      connection.exec_params("INSERT INTO users (name, email, password, type) VALUES($1, $2, $3, $4)", [name, email, password_hash, type])
     rescue PG::SyntaxError => e
       puts 'Error: A syntax error occurred in the SQL query.'
       puts e.message

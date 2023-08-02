@@ -32,5 +32,25 @@ class Task
       puts "Task Assign Successfully"
     end
   end
-end
 
+  def self.change_status(task, new_status)
+    connection = DatabaseConnection.connection
+    connection.exec_params('UPDATE tasks SET status = $1 WHERE id = $2', [new_status,task.id])
+  end
+  
+  def self.find_task(task_id)
+    connection = DatabaseConnection.connection
+    res=connection.exec_params('SELECT * FROM tasks WHERE id=$1',[task_id])
+    return Task.new(
+      id: res[0]['id'],
+      assignee_user_id: res[0]['assignee_user_id'],
+      description: res[0]['description'],
+      due_date: res[0]['due_date'],
+      priority: res[0]['priority'],
+      creator_id: res[0]['creator_id'],
+      status: res[0]['status']
+    )
+  end
+
+
+end
