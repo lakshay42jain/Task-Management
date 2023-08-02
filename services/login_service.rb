@@ -1,4 +1,4 @@
-class Login
+class LoginService
 
   def password_match(query_result_for_pass,user_input_password)
     BCrypt::Password.new(query_result_for_pass[0]['password']) == user_input_password

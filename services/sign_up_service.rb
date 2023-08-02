@@ -1,4 +1,4 @@
-class Signup
+class SignupService
 
   def create_user(name, email, password)
     u = User.new(

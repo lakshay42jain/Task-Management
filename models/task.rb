@@ -1,12 +1,11 @@
-require './table_setup.rb'
-require './database_connection.rb'
-require './user.rb'
+require_relative '../table_setup.rb'
+require_relative '../services/database_connection.rb'
+require_relative 'user.rb'
 
 class Task
-  attr_accessor :id, :assignee_user_id, :description, :due_date, :priority, :creator_id, :status
+  attr_accessor :assignee_user_id, :description, :due_date, :priority, :creator_id, :status
 
-  def initialize(id:, assignee_user_id:, description:, due_date:, priority:, creator_id:, status:)
-    self.id = id
+  def initialize(assignee_user_id:, description:, due_date:, priority:, creator_id:, status:)
     self.assignee_user_id = assignee_user_id
     self.description = description
     self.due_date = due_date
@@ -18,8 +17,8 @@ class Task
   def save 
     begin
       connection = DatabaseConnection.connection
-      connection.exec_params("INSERT INTO tasks(id, assignee_user_id, description, due_date, priority, creator_id, status) 
-      VALUES($1, $2, $3, $4, $5, $6, $7)", [id, assignee_user_id, description, due_date, priority, creator_id, status])
+      connection.exec_params("INSERT INTO tasks(assignee_user_id, description, due_date, priority, creator_id, status) 
+      VALUES($1, $2, $3, $4, $5, $6)", [assignee_user_id, description, due_date, priority, creator_id, status])
     rescue PG::InvalidTextRepresentation => e   
       puts "Invalid Represetation (May be status wrong)"
       puts e.message
@@ -74,12 +73,11 @@ class Task
     )
   end
 
-  def self.create_task(id:, assignee_user_id:, description:, due_date:, priority:, user:, status:)
+  def self.create_task(assignee_user_id:, description:, due_date:, priority:, user:, status:)
     connection = DatabaseConnection.connection
     res_user_id = connection.exec_params("SELECT * FROM users WHERE email=$1", [user.email])
     admin_id = res_user_id[0]['id']
     return Task.new(
-      id: id,
       assignee_user_id: assignee_user_id,
       description: description,
       due_date: due_date,

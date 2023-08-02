@@ -1,5 +1,5 @@
 require 'pg'
-require './database_connection.rb'
+require_relative 'services/database_connection.rb'
 
 class TableSetup
   attr_accessor :connection
@@ -65,7 +65,7 @@ class TableSetup
       self.connection.exec(
         <<~SQL
         CREATE TABLE IF NOT EXISTS tasks(
-          id INTEGER NOT NULL,
+          id SERIAL PRIMARY KEY,
           assignee_user_id INTEGER REFERENCES users(id) NOT NULL,
           description TEXT NOT NULL,
           due_date DATE NOT NULL,

@@ -1,10 +1,11 @@
-require './database_connection.rb'
+require_relative 'database_connection.rb'
+require_relative '../models/task.rb'
 
 class TaskManager
 
-  def change_status(task_id, new_status)
+  def change_the_status(task_id, new_status)
     task = Task.find_task(task_id)
-    task.change_status(task, new_status)
+    Task.change_status(task, new_status)
   end
 
   def show_all_tasks
@@ -19,7 +20,7 @@ class TaskManager
     task.save
   end
 
-  def change_priority(task_id:, new_priority:)
+  def priority_change(task_id, new_priority)
     task = Task.find_task(task_id)
     Task.change_priority(task,new_priority)
   end
