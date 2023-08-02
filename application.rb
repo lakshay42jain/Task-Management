@@ -10,6 +10,32 @@ class Application
     start_event_loop 
   end
 
+  def self.assign_task(user)
+    puts 'enter assignee user id'
+    assignee_user_id = gets.chomp
+    puts 'Enter Description about task'
+    description = gets.chomp
+    puts 'Enter Due_date Format (YYYY/MM/DD)'
+    due_date = gets.chomp
+    puts 'Enter priority eg: 1, 2, 3'
+    priority = gets.chomp
+    puts user.email
+    @@TaskManager.add_task(
+      assignee_user_id: assignee_user_id,
+      description: description,
+      due_date: due_date,
+      priority: priority, 
+      user: user
+    )
+  end
+
+  def self.delete_task
+    puts "Enter Task id you want to delete"
+    delete_id = gets.chomp.to_i
+    @@TaskManager.delete_task(delete_id)
+    puts "Deleted Sucessfully"
+  end
+
   def self.for_admin(user)
     puts "Welcome to Admin Panel"
     puts "---------------------------"
@@ -24,12 +50,11 @@ class Application
   
       case choice
       when 1 
-        # assign_task(user)
+        assign_task(user)
       when 2
-        # tm = TaskManager.new
-        # tm.show_all_tasks
+        @@TaskManager.show_all_tasks
       when 3
-        # delete_task
+        delete_task
       when 4
         puts("Exiting.......")
         break

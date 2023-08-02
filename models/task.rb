@@ -35,7 +35,7 @@ class Task
 
   def self.change_status(task, new_status)
     connection = DatabaseConnection.connection
-    connection.exec_params('UPDATE tasks SET status = $1 WHERE id = $2', [new_status,task.id])
+    connection.exec_params('UPDATE tasks SET status = $1 WHERE id = $2', [new_status, task.id])
   end
   
   def self.change_priority(task, new_priority)
@@ -73,17 +73,31 @@ class Task
     )
   end
 
+  def self.delete_task(task_id)
+    connection = DatabaseConnection.connection
+    result = connection.exec("DELETE FROM tasks WHERE id=$1", [task_id])
+  end
+
   def self.create_task(assignee_user_id:, description:, due_date:, priority:, user:, status:)
     connection = DatabaseConnection.connection
+    formatted_due_date = Date.parse(due_date).strftime('%Y-%m-%d')
     res_user_id = connection.exec_params("SELECT * FROM users WHERE email=$1", [user.email])
     admin_id = res_user_id[0]['id']
     return Task.new(
       assignee_user_id: assignee_user_id,
       description: description,
-      due_date: due_date,
+      due_date: formatted_due_date,
       priority: priority,
       creator_id: admin_id,
       status: status
     )
+  end
+
+  def self.show_all_tasks
+    connection = DatabaseConnection.connection
+    result = connection.exec_params("SELECT * FROM tasks")
+    result.each do |i|
+      puts i 
+    end
   end
 end

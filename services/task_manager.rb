@@ -13,10 +13,9 @@ class TaskManager
     res = connection.exec("SELECT * FROM tasks")
   end
 
-  def add_task(task_id:, assignee_user_id:, description:, due_date:, priority:, user:)
-    connection = DatabaseConnection.connection
+  def add_task(assignee_user_id:, description:, due_date:, priority:, user:)
     user = User.find_user(user.email)
-    task = Task.create_task(id: task_id, assignee_user_id: assignee_user_id, description: description, due_date: due_date, priority: priority, user: user, status: 'pending') 
+    task = Task.create_task(assignee_user_id: assignee_user_id, description: description, due_date: due_date, priority: priority, user: user, status: 'pending') 
     task.save
   end
 
@@ -29,6 +28,15 @@ class TaskManager
     Task.next_task(user)
   end
 
+  def delete_task(task_id)
+    Task.delete_task(task_id)
+    puts "Deleted !!"
+  end
+
+  def show_all_tasks
+    Task.show_all_tasks
+  end
+  
   def postpone_task
   end
 end

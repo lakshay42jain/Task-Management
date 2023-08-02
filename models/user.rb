@@ -3,19 +3,19 @@ require_relative '../services/database_connection.rb'
 require 'bcrypt'
 
 class User
-  attr_accessor :name, :email, :password_hash, :type
+  attr_accessor :name, :email, :password_hash, :type, :connect
 
   def initialize(name:, email:, password:, type:)
     self.name = name
     self.email = email
     self.password_hash = BCrypt::Password.create(password)
     self.type = type
+    self.connect = DatabaseConnection.connection
   end
 
   def save 
     begin
-      connection = DatabaseConnection.connection
-      connection.exec_params("INSERT INTO users (name, email, password, type) VALUES($1, $2, $3, $4)", [name, email, password_hash, type])
+      connect.exec_params("INSERT INTO users (name, email, password, type) VALUES($1, $2, $3, $4)", [name, email, password_hash, type])
     rescue PG::SyntaxError => e
       puts 'Error: A syntax error occurred in the SQL query.'
       puts e.message
@@ -28,8 +28,8 @@ class User
   end
 
   def self.find_user(email)
-    connection = DatabaseConnection.connection
-    res = connection.exec_params("SELECT * FROM users WHERE email=$1", [email])
+    connect = DatabaseConnection.connection
+    res = connect.exec_params("SELECT * FROM users WHERE email=$1", [email])
     return User.new(
       name: res[0]['name'],
       email: res[0]['email'],

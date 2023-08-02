@@ -4,10 +4,6 @@ require_relative 'models/user.rb'
 require_relative 'models/task.rb'
 require 'date'
 require 'bcrypt'
-
-require_relative 'services/task_manager.rb'
-
-#new files
 require_relative './application.rb'
 
 connection = DatabaseConnection.connection
@@ -37,31 +33,5 @@ t1 = Task.new(
   status: "in_progress"
 )
 t1.save
-def assign_task(admin)
-  puts 'enter assignee user id'
-  assignee_user_id = gets.chomp
-  puts 'Enter Description about task'
-  description = gets.chomp
-  puts 'Enter Due_date Format (DD//MM//YYYY)'
-  due_date = gets.chomp
-  puts 'Enter priority eg: 1, 2, 3'
-  priority = gets.chomp
-  tm = TaskManager.new
-  tm.add_task(
-    assignee_user_id: assignee_user_id,
-    description: description,
-    due_date: due_date,
-    priority: priority, 
-    user: admin
-  )
-end
-
-def delete_task
-  connection = DatabaseConnection.connection
-  puts "Enter Task id you want to delete"
-  delete_id = gets.chomp.to_i
-  res = connection.exec("DELETE FROM tasks WHERE id=$1", [delete_id])
-  puts "Deleted Sucessfully"
-end
 
 Application.boot
