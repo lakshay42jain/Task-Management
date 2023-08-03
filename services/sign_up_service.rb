@@ -1,12 +1,11 @@
 class SignupService
-
   def create_user(name, email, password)
-    u = User.new(
+    user = User.new(
       name: name,
       email: email,
       password: password,
       type: 'user'
     )
-    u.save
+    user.save
   end
 end

@@ -10,7 +10,7 @@ class User
     @@connection ||= DatabaseConnection.connection 
   end
 
-  def initialize(name:, email:, password:, type: , id: nil)
+  def initialize(name:, email:, password:, type:, id: nil)
     self.id = id
     self.name = name
     self.email = email
@@ -47,7 +47,7 @@ class User
         type: result[0]['type']
       )
     else
-      puts "User Does Not exist"
+      nil
     end
   end
 end

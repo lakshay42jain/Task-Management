@@ -11,7 +11,6 @@ class DatabaseConnection
           user: ENV['DATABASE_USER'],
           host: ENV['DATABASE_HOST']
         )
-        puts
       rescue PG::ConnectionBad => e
         puts "Bad Connection"  
         puts e.message

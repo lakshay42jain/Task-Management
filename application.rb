@@ -19,7 +19,6 @@ class Application
     due_date = gets.chomp
     puts 'Enter priority eg: 1, 2, 3'
     priority = gets.chomp
-    puts user.email
     @@TaskManager.add_task(
       assignee_user_id: assignee_user_id,
       description: description,
@@ -36,6 +35,7 @@ class Application
   end
 
   def self.for_admin(user)
+    system('clear')
     puts "Welcome to Admin Panel"
     puts "---------------------------"
     loop do 
@@ -44,7 +44,6 @@ class Application
       puts "2. Get All tasks"
       puts "3. Delete task"
       puts "4. Exit"
-  
       choice = gets.chomp.to_i
   
       case choice
@@ -56,7 +55,7 @@ class Application
         delete_task
       when 4
         puts("Exiting.......")
-        break
+        exit
       else
         puts("Invalid Choice. Please Enter a valid choice")    
       end
@@ -69,7 +68,7 @@ class Application
     puts "Available Statuses: pending, due, in progress, under_review, closed"
     puts "Enter the new status:"
     new_status = gets.chomp
-    @@TaskManager.change_the_status(task_id,new_status)
+    @@TaskManager.change_the_status(task_id, new_status)
   end
 
   def self.change_priority
@@ -78,7 +77,6 @@ class Application
     puts "Enter new Priority (Integer)"
     new_priority = gets.chomp.to_i
     @@TaskManager.priority_change(task_id, new_priority)
-    puts "Priority Changed !!"
   end
   
   def self.next_task(user)
@@ -95,6 +93,7 @@ class Application
   end
 
   def self.for_user(user)
+    system('clear')
     puts "Welcome User"
     puts "---------------------"
     loop do 
@@ -103,7 +102,7 @@ class Application
       puts "2. Priority Change"
       puts "3. Next Task For me"
       puts "4. Postpone the Task"
-      puts "4. Exit"
+      puts "5. Exit"    
       choice = gets.chomp.to_i 
   
       case choice
@@ -117,7 +116,7 @@ class Application
         task_postpone  
       when 5
         puts "Exiting........"
-        break  
+        exit
       else
         puts("Invalid Choice. Please Enter a valid choice")    
       end  
@@ -125,13 +124,22 @@ class Application
   end
 
   def self.login
-    puts 'Enter Email'
-    email = gets.chomp
-    puts 'Enter Password'
-    user_input_password = gets.chomp
+    system('clear')
+    email, password = nil
+    loop do 
+      puts 'Enter Email'
+      email = gets.chomp
+      break unless email.empty?
+    end
+
+    loop do
+      puts 'Enter Password'
+      password = gets.chomp
+      break unless password.empty?
+    end
+
     login = LoginService.new
-    user = login.validate(email, user_input_password)
-    puts user
+    user = login.validate(email, password)
     if user.type == 'admin'
       for_admin(user)
     else
@@ -140,6 +148,7 @@ class Application
   end
   
   def self.sign_up
+    system('clear')
     puts "Enter name"
     name = gets.chomp
     puts "Enter email"
@@ -150,7 +159,6 @@ class Application
     sign_up.create_user(name, email, password)
   end
 
-  
   def self.start_event_loop
     puts "Welcome to Task Management Solution"
     puts "----------------------------------------"
