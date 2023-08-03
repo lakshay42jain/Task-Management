@@ -47,7 +47,7 @@ class TableSetup
           id SERIAL PRIMARY KEY,
           name VARCHAR(20) NOT NULL,
           email VARCHAR(50) UNIQUE NOT NULL,
-          password VARCHAR(100) NOT NULL,
+          password VARCHAR NOT NULL,
           type admin_enum NOT NULL
         );
         SQL

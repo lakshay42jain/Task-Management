@@ -33,7 +33,6 @@ class Application
     puts "Enter Task id you want to delete"
     delete_id = gets.chomp.to_i
     @@TaskManager.delete_task(delete_id)
-    puts "Deleted Sucessfully"
   end
 
   def self.for_admin(user)
@@ -71,7 +70,6 @@ class Application
     puts "Enter the new status:"
     new_status = gets.chomp
     @@TaskManager.change_the_status(task_id,new_status)
-    puts "Status Changed !!"
   end
 
   def self.change_priority
@@ -88,6 +86,14 @@ class Application
     puts "Ticket id = #{res.id} and Description = #{res.description}"
   end
 
+  def self.task_postpone
+    puts "Enter Task id you want to postpone"
+    task_id = gets.chomp.to_i
+    puts "No of days you want to extend"
+    no_of_days = gets.chomp.to_i
+    @@TaskManager.postpone_task(task_id, no_of_days)
+  end
+
   def self.for_user(user)
     puts "Welcome User"
     puts "---------------------"
@@ -96,6 +102,7 @@ class Application
       puts "1. Change Status of Task"
       puts "2. Priority Change"
       puts "3. Next Task For me"
+      puts "4. Postpone the Task"
       puts "4. Exit"
       choice = gets.chomp.to_i 
   
@@ -107,6 +114,8 @@ class Application
       when 3 
         next_task(user)
       when 4 
+        task_postpone  
+      when 5
         puts "Exiting........"
         break  
       else
@@ -122,6 +131,7 @@ class Application
     user_input_password = gets.chomp
     login = LoginService.new
     user = login.validate(email, user_input_password)
+    puts user
     if user.type == 'admin'
       for_admin(user)
     else
