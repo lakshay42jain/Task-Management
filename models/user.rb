@@ -4,7 +4,6 @@ require 'bcrypt'
 
 class User
   attr_accessor :name, :email, :password, :type, :connect, :id
-  @@connection = nil 
 
   def self.connection
     @@connection ||= DatabaseConnection.connection 
@@ -25,7 +24,7 @@ class User
         User.connection.exec_params("INSERT INTO users (name, email, password, type) VALUES($1, $2, $3, $4)", [name, email, BCrypt::Password.create(password), type])
         puts "User Created Successfully"
       else
-        puts "email id already exist"
+        puts "Email Id already exist"
       end
     rescue PG::SyntaxError => e
       puts 'Error: A syntax error occurred in the SQL query.'
@@ -36,18 +35,23 @@ class User
     end
   end
 
+  def admin?
+    type == 'admin'
+  end
+
   def self.find_by_email(email)
     result = User.connection.exec_params("SELECT * FROM users WHERE email=$1", [email])
-    if result.ntuples >= 1
-      User.new(
-        id: result[0]['id'].to_i,
-        name: result[0]['name'],
-        email: result[0]['email'],
-        password: result[0]['password'],
-        type: result[0]['type']
-      )
+    if result.ntuples.zero?
+      puts "No User Found"
     else
-      nil
+      result = result[0].transform_keys(&:to_sym)
+      User.new(
+        id: result[:id].to_i,
+        name: result[:name],
+        email: result[:email],
+        password: result[:password],
+        type: result[:type]
+      )
     end
   end
 end

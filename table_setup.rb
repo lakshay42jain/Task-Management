@@ -71,7 +71,8 @@ class TableSetup
           due_date DATE NOT NULL,
           priority INTEGER NOT NULL,
           creator_id INTEGER REFERENCES users(id) NOT NULL, 
-          status status_enum NOT NULL
+          status status_enum NOT NULL,
+          deleted_at DATE 
         );
         SQL
       )

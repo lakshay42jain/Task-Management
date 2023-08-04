@@ -2,68 +2,88 @@ require_relative 'database_connection.rb'
 require_relative '../models/task.rb'
 
 class TaskManager
-  def change_the_status(task_id, new_status)
-    task = Task.find_task(task_id)
-    if task.nil?
-      puts "Status not changed due to invalid task id"
-    else
-      task.change_status(new_status)
-    end
-  end
-
+  
   def show_all_tasks
     Task.show_all_tasks
   end
 
-  def add_task(assignee_user_id:, description:, due_date:, priority:, user:)
-    user = User.find_by_email(user.email)
-    task = Task.create_task(assignee_user_id: assignee_user_id, description: description, due_date: due_date, priority: priority, user: user, status: 'pending') 
-    if task.nil?
-      puts "Invalid Id"
-    else
-      task.save
-      puts "Task Added !!"
+  def add_task(assignee_email_id:, description:, due_date:, priority:, user:)
+    begin
+      due_date = Date.parse(due_date)
+      assignee_user = User.find_by_email(assignee_email_id)
+      if assignee_user.nil?
+        puts "Invalid Email Id"
+      else  
+        Task.new(
+          assignee_user: assignee_user.id,
+          description: description,
+          due_date: due_date,
+          priority: priority,
+          creator: user.id,
+          status: 'pending'
+        ).save
+      end
+    rescue Date::Error => e
+      puts "Invalid Date"
     end
   end
 
-  def priority_change(task_id, new_priority)
-    task = Task.find_task(task_id)
-    if task.nil?
-      puts "Priority not changed due to invalid task id"
-    else
-      task.change_priority(new_priority)
-    end
-  end
-
-  def user_next_task(user)
+  def next_task(user)
     task = Task.next_task(user)
     if task.nil?
       puts "No new Task"
     else
-      task
+      puts "Task id = #{task.id}, Description = #{task.description}, Due Date = #{task.due_date}"
     end
   end
 
-  def delete_task(task_id)
-    task = Task.find_task(task_id)
+  def update_status(task_id, new_status)
+    task = Task.find_by_id(task_id)
     if task.nil?
-      puts "Not deleted due to invalid task id"
+      puts "Status not changed due to invalid task id"
     else
-      Task.delete_task(task_id)
+      task.status = new_status
+      task.save
     end
   end
 
-  def show_all_tasks
-    Task.show_all_tasks
+  def update_priority(task_id, new_priority)
+    task = Task.find_by_id(task_id)
+    if task.nil?
+      puts "Priority not changed due to invalid task id"
+    else
+      task.priority = new_priority
+      task.save
+    end
   end
 
   def postpone_task(task_id, no_of_days)
-    task = Task.find_task(task_id)
+    task = Task.find_by_id(task_id)
     if task.nil?
       puts "Invalid Task Id"
     else  
-      task.postpone_task(no_of_days)
+      new_date = task.due_date + no_of_days
+      task.due_date = new_date
+      task.save
     end
+  end
+
+  def delete_by_id(task_id)
+    task = Task.find_by_id(task_id)
+    if task.nil? 
+      puts "Invalid Task id"
+    else   
+      task.deleted_at = Date.today
+      task.save
+    end
+  end
+
+  def show_all_tasks_by_email(email_id)
+    Task.show_all_tasks_by_email(email_id)
+  end
+
+  def show_all_tasks_by_user_id(user_id)
+    Task.show_all_tasks_by_user_id(user_id)
   end
 end
 

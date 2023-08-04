@@ -3,24 +3,22 @@ require_relative 'services/sign_up_service.rb'
 require_relative 'services/task_manager.rb'
 
 class Application
-  @@TaskManager = nil 
-
   def self.boot
-    @@TaskManager = TaskManager.new
+    @@task_manager = TaskManager.new
     start_event_loop 
   end
 
   def self.assign_task(user)
-    puts 'enter assignee user id'
-    assignee_user_id = gets.chomp
+    puts 'enter assignee email id'
+    assignee_email_id = gets.chomp
     puts 'Enter Description about task'
     description = gets.chomp
-    puts 'Enter Due_date Format (YYYY/MM/DD)'
+    puts 'Enter Task Due date (Format : YYYY/MM/DD)'
     due_date = gets.chomp
     puts 'Enter priority eg: 1, 2, 3'
     priority = gets.chomp
-    @@TaskManager.add_task(
-      assignee_user_id: assignee_user_id,
+    @@task_manager.add_task(
+      assignee_email_id: assignee_email_id,
       description: description,
       due_date: due_date,
       priority: priority, 
@@ -29,9 +27,16 @@ class Application
   end
 
   def self.delete_task
-    puts "Enter Task id you want to delete"
-    delete_id = gets.chomp.to_i
-    @@TaskManager.delete_task(delete_id)
+    puts "Enter email id of user"
+    email_id = gets.chomp
+    result = @@task_manager.show_all_tasks_by_email(email_id)
+    if result.nil?
+      puts "No Task Found"
+    else   
+      puts "Enter task id which you want to delete"
+      task_id = gets.chomp.to_i
+      @@task_manager.delete_by_id(task_id)
+    end
   end
 
   def self.for_admin(user)
@@ -45,12 +50,11 @@ class Application
       puts "3. Delete task"
       puts "4. Exit"
       choice = gets.chomp.to_i
-  
       case choice
       when 1 
         assign_task(user)
       when 2
-        @@TaskManager.show_all_tasks
+        @@task_manager.show_all_tasks
       when 3
         delete_task
       when 4
@@ -62,34 +66,36 @@ class Application
     end
   end
 
-  def self.change_status
+  def self.update_status(user)
+    @@task_manager.show_all_tasks_by_user_id(user.id)
     puts "Enter Task id whose status want to change"
     task_id = gets.chomp.to_i
-    puts "Available Statuses: pending, due, in progress, under_review, closed"
+    puts "Available Statuses: pending, due, in_progress, under_review, closed"
     puts "Enter the new status:"
     new_status = gets.chomp
-    @@TaskManager.change_the_status(task_id, new_status)
+    @@task_manager.update_status(task_id, new_status)
   end
 
-  def self.change_priority
+  def self.update_priority(user)
+    @@task_manager.show_all_tasks_by_user_id(user.id)
     puts "Enter task_id "
     task_id = gets.chomp.to_i
     puts "Enter new Priority (Integer)"
     new_priority = gets.chomp.to_i
-    @@TaskManager.priority_change(task_id, new_priority)
+    @@task_manager.update_priority(task_id, new_priority)
   end
   
   def self.next_task(user)
-    res = @@TaskManager.user_next_task(user)
-    puts "Ticket id = #{res.id} and Description = #{res.description}"
+    @@task_manager.next_task(user)
   end
 
-  def self.task_postpone
+  def self.task_postpone(user)
+    @@task_manager.show_all_tasks_by_user_id(user.id)
     puts "Enter Task id you want to postpone"
     task_id = gets.chomp.to_i
     puts "No of days you want to extend"
     no_of_days = gets.chomp.to_i
-    @@TaskManager.postpone_task(task_id, no_of_days)
+    @@task_manager.postpone_task(task_id, no_of_days)
   end
 
   def self.for_user(user)
@@ -102,19 +108,21 @@ class Application
       puts "2. Priority Change"
       puts "3. Next Task For me"
       puts "4. Postpone the Task"
-      puts "5. Exit"    
+      puts "5. Show All Tasks"
+      puts "6. Exit"    
       choice = gets.chomp.to_i 
-  
       case choice
       when 1
-        change_status
+        update_status(user)
       when 2 
-        change_priority
+        update_priority(user)
       when 3 
         next_task(user)
       when 4 
-        task_postpone  
+        task_postpone(user)
       when 5
+        @@task_manager.show_all_tasks_by_email(user.email)
+      when 6  
         puts "Exiting........"
         exit
       else
@@ -140,7 +148,7 @@ class Application
 
     login = LoginService.new
     user = login.validate(email, password)
-    if user.type == 'admin'
+    if user.admin?
       for_admin(user)
     else
       for_user(user)
@@ -155,19 +163,20 @@ class Application
     email = gets.chomp 
     puts "Enter password"
     password = gets.chomp
-    sign_up = SignupService.new
-    sign_up.create_user(name, email, password)
+    sign_up_service = SignupService.new
+    sign_up_service.create_user(name, email, password)
   end
 
   def self.start_event_loop
+    system('clear')
     puts "Welcome to Task Management Solution"
     puts "----------------------------------------"
     loop do 
+      system('clear')
       puts "1. Login"
       puts "2. Sign up"
       puts "3. Exit"
       choice = gets.chomp.to_i
-
       case choice 
       when 1 
         login
@@ -175,7 +184,7 @@ class Application
         sign_up 
       when 3 
         puts "Exiting....."
-        break
+        exit(1)
       else      
         puts ("Invalid Choice. Please Enter a valid choice")
       end
