@@ -4,7 +4,7 @@ require_relative 'services/task_manager.rb'
 
 class Application
   def self.boot
-    @@task_manager = TaskManager.new
+    @@task_manager ||= TaskManager.new
     start_event_loop 
   end
 
