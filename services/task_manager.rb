@@ -78,13 +78,7 @@ class TaskManager
     end
   end
 
-  def show_all_by_email(email_id)
-    user = User.find_by_email(email_id)
-    Task.show_all_for_user(user)
-  end
-
   def show_all_for_user(user)
     Task.show_all_for_user(user)
   end
 end
-
