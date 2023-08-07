@@ -27,11 +27,15 @@ class Task
   def save 
     begin
       if id.nil?
-        connection.exec_params("INSERT INTO tasks(assignee_user_id, description, due_date, priority, creator_id, status) VALUES ($1, $2, $3, $4, $5, $6)", [assignee_user, description, due_date, priority, creator, status])
+        result = connection.exec_params("INSERT INTO tasks(assignee_user_id, description, due_date, priority, creator_id, status) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *", [assignee_user, description, due_date, priority, creator, status])
+        if result.ntuples.nonzero?
+          self.id = result[0]['id']
+        end 
         puts "Task Assigned Successfully"
+        self 
       else
         Task.connection.exec_params("UPDATE tasks SET priority=$1, status=$2, deleted_at=$3, due_date=$4 WHERE id=$5", [priority, status, deleted_at, due_date, id])
-        puts "Updated !!"
+        puts "Updated !!" 
       end
     rescue PG::InvalidTextRepresentation => e   
       puts "Invalid Status Entered .... "
@@ -100,27 +104,7 @@ class Task
       puts e.message 
     end
   end
-
-  def self.create_task(assignee_user:, description:, due_date:, priority:, creator_email:, status:)
-    begin
-      date = Date.parse(due_date)
-      formatted_due_date = Date.parse(due_date).strftime('%Y-%m-%d')
-      user = User.find_by_email(creator_email)
-      new(
-        assignee_user: assignee_user,
-        description: description,
-        due_date: formatted_due_date,
-        priority: priority,
-        creator: user.id,
-        status: status
-      )
-    rescue ArgumentError => e
-      puts "Error parsing due_date: #{e.message}"
-    rescue TypeError => e
-      puts "Error formatting due_date: #{e.message}"  
-    end
-  end
-
+  
   def self.show_all
     begin
       result = connection.exec_params("SELECT * FROM tasks WHERE deleted_at IS NULL").to_a

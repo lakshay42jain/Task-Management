@@ -5,7 +5,7 @@ class TableSetup
   attr_accessor :connection
 
   def initialize(connection)
-    self.connection=connection
+    self.connection = connection
   end
 
   def setup_database
@@ -31,6 +31,8 @@ class TableSetup
           );
         SQL
       )
+    rescue PG::DuplicateObject => e
+      puts "Enum Types Already Exists"
     rescue PG::SyntaxError => e
       puts 'Error: A syntax error occurred in the SQL query for enums.'
       puts e.message

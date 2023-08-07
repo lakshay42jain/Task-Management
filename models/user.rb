@@ -23,8 +23,14 @@ class User
 
   def save 
     begin
-      connection.exec_params("INSERT INTO users (name, email, password, type) VALUES($1, $2, $3, $4)", [name, email, BCrypt::Password.create(password), type])
-      puts "User Created Successfully"
+      if id.nil?
+        result = connection.exec_params("INSERT INTO users (name, email, password, type) VALUES($1, $2, $3, $4) RETURNING *", [name, email, BCrypt::Password.create(password), type])
+        if result.ntuples.nonzero?
+          self.id = result[0]['id']
+          puts "User Created Successfully" 
+        end
+        self
+      end
     rescue PG::SyntaxError => e
       puts 'Error: A syntax error occurred in the SQL query.'
       puts e.message
