@@ -3,8 +3,8 @@ require_relative '../models/task.rb'
 
 class TaskManager
   
-  def show_all_tasks
-    Task.show_all_tasks
+  def show_all
+    Task.show_all
   end
 
   def add_task(assignee_email_id:, description:, due_date:, priority:, user:)
@@ -57,7 +57,7 @@ class TaskManager
     end
   end
 
-  def postpone_task(task_id, no_of_days)
+  def postpone(task_id, no_of_days)
     task = Task.find_by_id(task_id)
     if task.nil?
       puts "Invalid Task Id"
@@ -78,12 +78,13 @@ class TaskManager
     end
   end
 
-  def show_all_tasks_by_email(email_id)
-    Task.show_all_tasks_by_email(email_id)
+  def show_all_by_email(email_id)
+    user = User.find_by_email(email_id)
+    Task.show_all_for_user(user)
   end
 
-  def show_all_tasks_by_user_id(user_id)
-    Task.show_all_tasks_by_user_id(user_id)
+  def show_all_for_user(user)
+    Task.show_all_for_user(user)
   end
 end
 

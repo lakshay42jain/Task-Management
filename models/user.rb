@@ -9,6 +9,10 @@ class User
     @@connection ||= DatabaseConnection.connection 
   end
 
+  private def connection
+    @connection ||= User.connection
+  end
+
   def initialize(name:, email:, password:, type:, id: nil)
     self.id = id
     self.name = name
@@ -19,13 +23,8 @@ class User
 
   def save 
     begin
-      user = User.find_by_email(email)
-      if user.nil?
-        User.connection.exec_params("INSERT INTO users (name, email, password, type) VALUES($1, $2, $3, $4)", [name, email, BCrypt::Password.create(password), type])
-        puts "User Created Successfully"
-      else
-        puts "Email Id already exist"
-      end
+      connection.exec_params("INSERT INTO users (name, email, password, type) VALUES($1, $2, $3, $4)", [name, email, BCrypt::Password.create(password), type])
+      puts "User Created Successfully"
     rescue PG::SyntaxError => e
       puts 'Error: A syntax error occurred in the SQL query.'
       puts e.message
@@ -40,10 +39,8 @@ class User
   end
 
   def self.find_by_email(email)
-    result = User.connection.exec_params("SELECT * FROM users WHERE email=$1", [email])
-    if result.ntuples.zero?
-      puts "No User Found"
-    else
+    result = connection.exec_params("SELECT * FROM users WHERE email=$1", [email])
+    if result.ntuples.nonzero?
       result = result[0].transform_keys(&:to_sym)
       User.new(
         id: result[:id].to_i,
@@ -52,6 +49,8 @@ class User
         password: result[:password],
         type: result[:type]
       )
+    else
+      puts "Email Does Not exist !!"
     end
   end
 end

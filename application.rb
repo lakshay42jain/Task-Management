@@ -29,10 +29,9 @@ class Application
   def self.delete_task
     puts "Enter email id of user"
     email_id = gets.chomp
-    result = @@task_manager.show_all_tasks_by_email(email_id)
-    if result.nil?
-      puts "No Task Found"
-    else   
+    user = User.find_by_email(email_id)
+    result = @@task_manager.show_all_for_user(user)
+    if result   
       puts "Enter task id which you want to delete"
       task_id = gets.chomp.to_i
       @@task_manager.delete_by_id(task_id)
@@ -54,7 +53,7 @@ class Application
       when 1 
         assign_task(user)
       when 2
-        @@task_manager.show_all_tasks
+        @@task_manager.show_all
       when 3
         delete_task
       when 4
@@ -67,7 +66,7 @@ class Application
   end
 
   def self.update_status(user)
-    @@task_manager.show_all_tasks_by_user_id(user.id)
+    @@task_manager.show_all_for_user(user)
     puts "Enter Task id whose status want to change"
     task_id = gets.chomp.to_i
     puts "Available Statuses: pending, due, in_progress, under_review, closed"
@@ -77,7 +76,7 @@ class Application
   end
 
   def self.update_priority(user)
-    @@task_manager.show_all_tasks_by_user_id(user.id)
+    @@task_manager.show_all_for_user(user)
     puts "Enter task_id "
     task_id = gets.chomp.to_i
     puts "Enter new Priority (Integer)"
@@ -89,13 +88,13 @@ class Application
     @@task_manager.next_task(user)
   end
 
-  def self.task_postpone(user)
-    @@task_manager.show_all_tasks_by_user_id(user.id)
+  def self.postpone(user)
+    @@task_manager.show_all_for_user(user)
     puts "Enter Task id you want to postpone"
     task_id = gets.chomp.to_i
     puts "No of days you want to extend"
     no_of_days = gets.chomp.to_i
-    @@task_manager.postpone_task(task_id, no_of_days)
+    @@task_manager.postpone(task_id, no_of_days)
   end
 
   def self.for_user(user)
@@ -119,9 +118,9 @@ class Application
       when 3 
         next_task(user)
       when 4 
-        task_postpone(user)
+        postpone(user)
       when 5
-        @@task_manager.show_all_tasks_by_email(user.email)
+        @@task_manager.show_all_for_user(user)
       when 6  
         puts "Exiting........"
         exit
@@ -165,6 +164,7 @@ class Application
     password = gets.chomp
     sign_up_service = SignupService.new
     sign_up_service.create_user(name, email, password)
+    sleep 1
   end
 
   def self.start_event_loop

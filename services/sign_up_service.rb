@@ -6,6 +6,10 @@ class SignupService
       password: password,
       type: 'user'
     )
-    user.save
+    if User.find_by_email(email)
+      puts "User Already Exist"
+    else   
+      user.save
+    end
   end
 end
