@@ -1,6 +1,8 @@
 require 'bcrypt'
 require_relative '../services/login_service.rb'
 require_relative '../models/user.rb'
+require 'simplecov'
+# SimpleCov.start
 
 RSpec.describe LoginService do
   let(:login_service) { LoginService.new }
