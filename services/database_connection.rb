@@ -25,4 +25,9 @@ class DatabaseConnection
     end
     @@connection
   end
+
+  def self.clear_tables
+    @@connection.exec("DELETE FROM tasks;")
+    @@connection.exec("DELETE FROM users;")
+  end
 end

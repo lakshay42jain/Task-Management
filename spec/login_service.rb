@@ -1,10 +1,14 @@
-require 'bcrypt'
-require_relative '../services/login_service.rb'
-require_relative '../models/user.rb'
-require 'simplecov'
+require_relative './spec_helper.rb'
 
+describe LoginService do
+  before(:each) do
+    DatabaseConnection.clear_tables
+  end
 
-RSpec.describe LoginService do
+  after(:each) do 
+    DatabaseConnection.clear_tables
+  end
+
   let(:login_service) { LoginService.new }
 
   describe '#valid_password?' do
@@ -25,11 +29,15 @@ RSpec.describe LoginService do
 
   describe '#validate' do 
     it 'returns the user for valid email and password' do 
-      user = User.new(email: 'dummy@gmail.com', password: BCrypt::Password.create('dummy_password'), name: 'dummy', type: 'user')
-      allow(User).to receive(:find_by_email).and_return(user)
-
-      expect(login_service.validate('dummy@gmail.com', 'dummy_password')).to eq user
+      user = User.new(
+        name: 'Dummy Value', 
+        email: 'dummy.value@example.com', 
+        password: 'password123', 
+        type: 'user'
+      ) 
+      user = user.save
+      returned_user = login_service.validate('dummy.value@example.com', 'password123')
+      expect(returned_user.email).to eq user.email
     end
   end
-
 end

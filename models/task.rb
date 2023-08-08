@@ -1,6 +1,6 @@
 require_relative '../table_setup.rb'
 require_relative '../services/database_connection.rb'
-require_relative 'user.rb'
+require_relative 'task.rb'
 
 class Task
   def self.connection
