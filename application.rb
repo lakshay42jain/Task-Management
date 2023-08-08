@@ -60,7 +60,7 @@ class Application
         delete_task
       when 4
         puts("Exiting.......")
-        exit
+        break
       else
         puts("Invalid Choice. Please Enter a valid choice")    
       end
@@ -125,7 +125,7 @@ class Application
         @@task_manager.show_all_for_user(user)
       when 6  
         puts "Exiting........"
-        exit
+        break
       else
         puts("Invalid Choice. Please Enter a valid choice")    
       end  

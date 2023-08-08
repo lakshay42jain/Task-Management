@@ -115,7 +115,8 @@ describe Task do
           status: 'in_progress'
         )
         task2.save
-        expect(Task.show_all)
+        # expect(Task.show_all).to be_nil
       end
     end
+  end
 end
