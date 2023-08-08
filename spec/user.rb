@@ -1,5 +1,5 @@
 require 'rspec'
-require_relative '../models/user'  # Assuming your User class is in a separate 'user.rb' file
+require_relative '../models/user' 
 require_relative '../services/database_connection.rb'
 require 'simplecov'
 require_relative 'spec_helper.rb'
@@ -44,7 +44,7 @@ describe User do
     end
 
     it 'returns false if the user type is not admin' do
-      user = User.new(name: name, email: email, password: password, type: 'regular')
+      user = User.new(name: name, email: email, password: password, type: 'user')
       expect(user.admin?).to be false
     end
   end
