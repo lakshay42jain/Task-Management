@@ -1,11 +1,11 @@
 require 'pg'
-require './database_connection.rb'
+require_relative 'services/database_connection.rb'
 
 class TableSetup
   attr_accessor :connection
 
   def initialize(connection)
-    self.connection=connection
+    self.connection = connection
   end
 
   def setup_database
@@ -31,6 +31,8 @@ class TableSetup
           );
         SQL
       )
+    rescue PG::DuplicateObject => e
+      puts "Enum Types Already Exists"
     rescue PG::SyntaxError => e
       puts 'Error: A syntax error occurred in the SQL query for enums.'
       puts e.message
@@ -47,7 +49,7 @@ class TableSetup
           id SERIAL PRIMARY KEY,
           name VARCHAR(20) NOT NULL,
           email VARCHAR(50) UNIQUE NOT NULL,
-          password VARCHAR(100) NOT NULL,
+          password VARCHAR NOT NULL,
           type admin_enum NOT NULL
         );
         SQL
@@ -65,13 +67,14 @@ class TableSetup
       self.connection.exec(
         <<~SQL
         CREATE TABLE IF NOT EXISTS tasks(
-          id INTEGER NOT NULL,
+          id SERIAL PRIMARY KEY,
           assignee_user_id INTEGER REFERENCES users(id) NOT NULL,
           description TEXT NOT NULL,
           due_date DATE NOT NULL,
           priority INTEGER NOT NULL,
           creator_id INTEGER REFERENCES users(id) NOT NULL, 
-          status status_enum NOT NULL
+          status status_enum NOT NULL,
+          deleted_at DATE 
         );
         SQL
       )
