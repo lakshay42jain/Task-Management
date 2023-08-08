@@ -30,11 +30,13 @@ class Application
     puts "Enter email id of user"
     email_id = gets.chomp
     user = User.find_by_email(email_id)
-    result = @@task_manager.show_all_for_user(user)
-    if result   
-      puts "Enter task id which you want to delete"
-      task_id = gets.chomp.to_i
-      @@task_manager.delete_by_id(task_id)
+    if user
+      result = @@task_manager.show_all_for_user(user)
+      if result
+        puts "Enter task id which you want to delete"
+        task_id = gets.chomp.to_i
+        @@task_manager.delete_by_id(task_id)
+      end 
     end
   end
 
