@@ -1,6 +1,6 @@
 require_relative '../table_setup.rb'
 require_relative '../services/database_connection.rb'
-require_relative 'user.rb'
+require_relative 'task.rb'
 
 class Task
   def self.connection
@@ -107,16 +107,16 @@ class Task
   
   def self.show_all
     begin
-      result = connection.exec_params("SELECT * FROM tasks WHERE deleted_at IS NULL").to_a
+      result = connection.exec_params("SELECT * FROM tasks").to_a
       if result.empty?
         puts "No Task Found"
       else
         puts "-" * 150
-        puts sprintf("%-5s%-20s%-40s%-20s%-10s%-20s%-20s", "ID", "Assignee User", "Description", "Due Date", "Priority", "Status", "Creator")
+        puts sprintf("%-5s%-20s%-40s%-20s%-10s%-20s%-20s%-20s", "ID", "Assignee User", "Description", "Due Date", "Priority", "Status", "Creator", "deleted_at")
         puts "-" * 150
         result.each do |task|
           row = task.transform_keys(&:to_sym)
-          puts sprintf("%-5s%-20s%-40s%-20s%-10s%-20s%-20s", row[:id], row[:assignee_user_id], row[:description], row[:due_date], row[:priority], row[:status], row[:creator_id])
+          puts sprintf("%-5s%-20s%-40s%-20s%-10s%-20s%-20s%-20s", row[:id], row[:assignee_user_id], row[:description], row[:due_date], row[:priority], row[:status], row[:creator_id], row[:deleted_at])
         end
         puts "-" * 150
       end
@@ -130,7 +130,7 @@ class Task
   end
 
   def self.show_all_for_user(user)
-    result = connection.exec_params("SELECT * FROM tasks WHERE assignee_user_id=$1", [user.id]).to_a
+    result = connection.exec_params("SELECT * FROM tasks WHERE assignee_user_id=$1 AND deleted_at IS NULL", [user.id]).to_a
     if result.empty?
       puts "No Task Found"
     else

@@ -1,5 +1,4 @@
 require 'pg'
-require 'dotenv/load'
 
 class DatabaseConnection
   @@connection = nil 
@@ -22,9 +21,13 @@ class DatabaseConnection
         initial_connection.exec("CREATE DATABASE #{ENV['DATABASE_NAME']}")
         initial_connection.close  
         puts "Database Successfully Created"  
-        exit
       end
     end
     @@connection
+  end
+
+  def self.clear_tables
+    @@connection.exec("DELETE FROM tasks;")
+    @@connection.exec("DELETE FROM users;")
   end
 end

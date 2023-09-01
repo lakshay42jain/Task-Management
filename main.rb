@@ -5,6 +5,7 @@ require_relative 'models/task.rb'
 require 'date'
 require 'bcrypt'
 require_relative './application.rb'
+require 'dotenv/load'
 
 connection = DatabaseConnection.connection
 table_setup = TableSetup.new(connection)
